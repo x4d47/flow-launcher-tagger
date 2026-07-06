@@ -1,0 +1,12 @@
+{
+  "ID": "faa0a594-aec1-4c70-8938-22951ef300fd",
+  "ActionKeyword": "tag",
+  "Name": "Tags",
+  "Description": "Tags plugin description...",
+  "Author": "x4d47",
+  "Version": "1.0.0",
+  "Language": "python",
+  "Website": "https://github.com/x4d47",
+  "IcoPath": "Images\\app.png",
+  "ExecuteFileName": "main.py"
+}

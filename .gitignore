@@ -1,0 +1,7 @@
+.pytest_chache
+__pycache__
+lib
+123.py
+plugin.log
+programs.json
+tags.json

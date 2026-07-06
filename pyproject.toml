@@ -1,0 +1,11 @@
+[tool.ruff]
+extend-exclude = ["lib"]
+
+[tool.basedpyright]
+exclude = [
+    "lib",
+    "**/lib"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
