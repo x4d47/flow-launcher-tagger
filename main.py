@@ -31,6 +31,8 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+PLUGIN_KEYWORD = "tag"
+
 
 class TagsPlugin(FlowLauncher):
     def __init__(self):
@@ -104,31 +106,58 @@ class TagsPlugin(FlowLauncher):
         _ = subprocess.Popen(path)
 
     def autocomplete_command(self) -> list[FlowLauncherResult]:
+        SCORE: int = 100  # big enough for commands to appear at the top of a list
+
         return [
             {
                 "Title": "Add tag",
-                "QuerySuggestionText": "Type tag name",
+                "QuerySuggestionText": "type tag name or select from the list",
                 "IcoPath": "Images/transparent.png",
                 "JsonRPCAction": {
                     "method": "Flow.Launcher.ChangeQuery",
-                    "parameters": [f"# {CommandKeyword.ADD_TAG} ", False],
+                    "parameters": [
+                        f"{PLUGIN_KEYWORD} {CommandKeyword.ADD_TAG} ",
+                        False,
+                    ],
                     "dontHideAfterAction": True,
                 },
+                "Score": SCORE,
             },
             {
                 "Title": "Remove tag",
-                "QuerySuggestionText": "Type tag name",
+                "QuerySuggestionText": "type tag name or select from the list",
                 "IcoPath": "Images/transparent.png",
                 "JsonRPCAction": {
                     "method": "Flow.Launcher.ChangeQuery",
-                    "parameters": [f"# {CommandKeyword.REMOVE_TAG} ", False],
+                    "parameters": [
+                        f"{PLUGIN_KEYWORD} {CommandKeyword.REMOVE_TAG} ",
+                        False,
+                    ],
                     "dontHideAfterAction": True,
                 },
+                "Score": SCORE,
             },
         ]
 
-    # def autocomplete_tag(self, context) -> list[FlowLauncherResult]:
-    #     pass
+    def autocomplete_tag(self, prefix: str) -> list[FlowLauncherResult]:
+        results: list[FlowLauncherResult] = []
+
+        for tag in self.tag_manager.tags:
+            if tag.startswith(prefix):
+                results.append(
+                    {
+                        "Title": f"{tag}",
+                        "IcoPath": "Images/transparent.png",
+                        "QuerySuggestionText": f"{tag} ",
+                        "JsonRPCAction": {
+                            "method": "Flow.Launcher.ChangeQuery",
+                            "parameters": [f"{PLUGIN_KEYWORD} {tag} ", False],
+                            "dontHideAfterAction": True,
+                        },
+                    }
+                )
+
+        return results
 
     def autocomplete(self, context: AutocompleteContext) -> list[FlowLauncherResult]:
         result: list[FlowLauncherResult] = []
@@ -137,7 +166,7 @@ class TagsPlugin(FlowLauncher):
             case [AutocompleteType.TAG, AutocompleteType.COMMAND]:
                 result = [
                     *self.autocomplete_command(),
-                    # *self.autocomplete_tag(context.prefix),
+                    *self.autocomplete_tag(context.prefix),
                 ]
             case _:
                 pass
