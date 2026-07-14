@@ -4,7 +4,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Self
 
-from programs import Program, ProgramDict, get_all_installed_programs
+from core.programs import Program, ProgramDict, get_all_installed_programs
 
 
 class ProgramManager:

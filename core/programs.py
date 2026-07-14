@@ -2,8 +2,8 @@ import winreg
 from dataclasses import dataclass
 from typing import TypedDict, cast
 
-from flowlauncher_types import FlowLauncherResult
-from icon_extractor import get_dll_icon_as_data_uri
+from core.flowlauncher_types import FlowLauncherResult
+from core.icon_extractor import get_dll_icon_as_data_uri
 
 
 class ProgramDict(TypedDict):

@@ -1,7 +1,7 @@
 import pytest
 
-from lexer import CommandKeyword, Lexer
-from parser import (
+from core.lexer import CommandKeyword, Lexer
+from core.parser import (
     AddTag,
     AutocompleteContext,
     AutocompleteType,

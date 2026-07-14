@@ -4,7 +4,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Self
 
-from programs import Program
+from core.programs import Program
 
 
 class TagManager:

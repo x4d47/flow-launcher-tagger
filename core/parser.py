@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Protocol
 
-from flowlauncher_types import FlowLauncherResult
-from lexer import Token, TokenType
+from core.flowlauncher_types import FlowLauncherResult
+from core.lexer import Token, TokenType
 
 
 class ParserError(ValueError):
@@ -61,6 +61,7 @@ class ParserResult:
     tag_name: str | None
     program_name: str | None
     autocomplete_context: AutocompleteContext
+    is_command_ready: bool
 
 
 class Parser:
@@ -183,5 +184,9 @@ class Parser:
 
     def get_result(self) -> ParserResult:
         return ParserResult(
-            self.command, self.tag_name, self.program_name, self.autocomplete_context
+            self.command,
+            self.tag_name,
+            self.program_name,
+            self.autocomplete_context,
+            True if self.state == ParserState.COMMAND_READY else False,
         )

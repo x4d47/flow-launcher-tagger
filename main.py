@@ -8,9 +8,9 @@ from typing import Callable, override
 from flowlauncher.FlowLauncher import FlowLauncher
 from flowlauncher.FlowLauncherAPI import FlowLauncherAPI
 
-from flowlauncher_types import FlowLauncherResult
-from lexer import CommandKeyword, Lexer
-from parser import (
+from core.flowlauncher_types import FlowLauncherResult
+from core.lexer import CommandKeyword, Lexer
+from core.parser import (
     AddTag,
     AutocompleteContext,
     AutocompleteType,
@@ -20,18 +20,9 @@ from parser import (
     ParserError,
     RemoveTag,
 )
-from program_manager import ProgramManager
-from programs import Program
-from tag_manager import TagManager
-
-logging.basicConfig(
-    filename="plugin.log",
-    level=logging.DEBUG,
-    format="%(asctime)s [%(levelname)s] %(name)s (%(filename)s:%(lineno)d): %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
-logger = logging.getLogger(__name__)
+from core.program_manager import ProgramManager
+from core.programs import Program
+from core.tag_manager import TagManager
 
 appdata = os.environ.get("APPDATA")
 
@@ -41,6 +32,15 @@ PLUGIN_DATADIR = (
     if appdata
     else Path(".")
 )
+
+logging.basicConfig(
+    filename=PLUGIN_DATADIR / "plugin.log",
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(name)s (%(filename)s:%(lineno)d): %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 
 class TagsPlugin(FlowLauncher):
