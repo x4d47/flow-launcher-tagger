@@ -2,8 +2,9 @@ import logging
 import os
 import subprocess
 import webbrowser
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, override
+from typing import override
 
 from flowlauncher.FlowLauncher import FlowLauncher
 from flowlauncher.FlowLauncherAPI import FlowLauncherAPI
@@ -94,7 +95,7 @@ class TagsPlugin(FlowLauncher):
             parser_result = parser.get_result()
         except ParserError as e:
             logger.exception("Parser error: %s", e)
-            return [e.as_flowlauncher_result()]
+            # return [e.as_flowlauncher_result()]
 
         results.extend(self.autocomplete(parser_result.autocomplete_context))
 

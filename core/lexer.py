@@ -23,7 +23,7 @@ class Token:
 
 class Lexer:
     def __init__(self, input: str) -> None:
-        self.input: str = input
+        self.input: str = input.lstrip()
 
     @property
     def tokens(self):
@@ -33,7 +33,13 @@ class Lexer:
             yield Token(TokenType.NOTHING, "")
             return
 
+        current_idx = 0
         for part in parts:
+            part_idx = self.input.find(part, current_idx)
+
+            if part_idx > current_idx:
+                yield Token(TokenType.SPACE, " ")
+
             match part:
                 case CommandKeyword.ADD_TAG:
                     yield Token(TokenType.OP_ADD, part)
@@ -42,5 +48,7 @@ class Lexer:
                 case _:
                     yield Token(TokenType.IDENTIFIER, part)
 
-        if self.input.endswith(" "):
+            current_idx = part_idx + len(part)
+
+        if current_idx < len(self.input):
             yield Token(TokenType.SPACE, " ")

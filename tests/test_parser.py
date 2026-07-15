@@ -28,10 +28,8 @@ def parse_input(input: str) -> ParserResult:
             "",
             ParserResult(
                 command=None,
-                tag_name=None,
-                program_name=None,
                 autocomplete_context=AutocompleteContext(
-                    [AutocompleteType.TAG, AutocompleteType.COMMAND], ""
+                    [AutocompleteType.COMMAND, AutocompleteType.TAG], ""
                 ),
             ),
         )
@@ -54,10 +52,8 @@ def test_empty_input(input: str, expected_result: ParserResult):
             " ",  # one space
             ParserResult(
                 command=None,
-                tag_name=None,
-                program_name=None,
                 autocomplete_context=AutocompleteContext(
-                    [AutocompleteType.TAG, AutocompleteType.COMMAND], ""
+                    [AutocompleteType.COMMAND, AutocompleteType.TAG], ""
                 ),
             ),
         ),
@@ -65,10 +61,8 @@ def test_empty_input(input: str, expected_result: ParserResult):
             "  ",  # two spaces
             ParserResult(
                 command=None,
-                tag_name=None,
-                program_name=None,
                 autocomplete_context=AutocompleteContext(
-                    [AutocompleteType.TAG, AutocompleteType.COMMAND], ""
+                    [AutocompleteType.COMMAND, AutocompleteType.TAG], ""
                 ),
             ),
         ),
@@ -84,27 +78,21 @@ def test_space_input(input: str, expected_result: ParserResult):
         (
             f"{CommandKeyword.ADD_TAG}",
             ParserResult(
-                command=AddTag,
-                tag_name=None,
-                program_name=None,
+                command=None,
                 autocomplete_context=AutocompleteContext([AutocompleteType.TAG], ""),
             ),
         ),
         (
             f"{CommandKeyword.ADD_TAG} ",
             ParserResult(
-                command=AddTag,
-                tag_name=None,
-                program_name=None,
+                command=None,
                 autocomplete_context=AutocompleteContext([AutocompleteType.TAG], ""),
             ),
         ),
         (
             f"{CommandKeyword.ADD_TAG} TagName",
             ParserResult(
-                command=AddTag,
-                tag_name="TagName",
-                program_name=None,
+                command=None,
                 autocomplete_context=AutocompleteContext(
                     [AutocompleteType.TAG], "TagName"
                 ),
@@ -113,9 +101,7 @@ def test_space_input(input: str, expected_result: ParserResult):
         (
             f"{CommandKeyword.ADD_TAG} TagName ",
             ParserResult(
-                command=AddTag,
-                tag_name="TagName",
-                program_name=None,
+                command=None,
                 autocomplete_context=AutocompleteContext(
                     [AutocompleteType.PROGRAM], ""
                 ),
@@ -124,9 +110,7 @@ def test_space_input(input: str, expected_result: ParserResult):
         (
             f"{CommandKeyword.ADD_TAG} TagName Program",
             ParserResult(
-                command=AddTag,
-                tag_name="TagName",
-                program_name="Program",
+                command=AddTag("TagName", "Program"),
                 autocomplete_context=AutocompleteContext(
                     [AutocompleteType.PROGRAM], "Program"
                 ),
@@ -135,9 +119,7 @@ def test_space_input(input: str, expected_result: ParserResult):
         (
             f"{CommandKeyword.ADD_TAG} TagName Program Name",
             ParserResult(
-                command=AddTag,
-                tag_name="TagName",
-                program_name="Program Name",
+                command=AddTag("TagName", "Program Name"),
                 autocomplete_context=AutocompleteContext(
                     [AutocompleteType.PROGRAM], "Program Name"
                 ),
@@ -155,27 +137,21 @@ def test_add_command(input: str, expected_result: ParserResult):
         (
             f"{CommandKeyword.REMOVE_TAG}",
             ParserResult(
-                command=RemoveTag,
-                tag_name=None,
-                program_name=None,
+                command=None,
                 autocomplete_context=AutocompleteContext([AutocompleteType.TAG], ""),
             ),
         ),
         (
             f"{CommandKeyword.REMOVE_TAG} ",
             ParserResult(
-                command=RemoveTag,
-                tag_name=None,
-                program_name=None,
+                command=None,
                 autocomplete_context=AutocompleteContext([AutocompleteType.TAG], ""),
             ),
         ),
         (
             f"{CommandKeyword.REMOVE_TAG} TagName",
             ParserResult(
-                command=RemoveTag,
-                tag_name="TagName",
-                program_name=None,
+                command=None,
                 autocomplete_context=AutocompleteContext(
                     [AutocompleteType.TAG], "TagName"
                 ),
@@ -184,9 +160,7 @@ def test_add_command(input: str, expected_result: ParserResult):
         (
             f"{CommandKeyword.REMOVE_TAG} TagName ",
             ParserResult(
-                command=RemoveTag,
-                tag_name="TagName",
-                program_name=None,
+                command=None,
                 autocomplete_context=AutocompleteContext(
                     [AutocompleteType.PROGRAM], ""
                 ),
@@ -195,9 +169,7 @@ def test_add_command(input: str, expected_result: ParserResult):
         (
             f"{CommandKeyword.REMOVE_TAG} TagName Program",
             ParserResult(
-                command=RemoveTag,
-                tag_name="TagName",
-                program_name="Program",
+                command=RemoveTag("TagName", "Program"),
                 autocomplete_context=AutocompleteContext(
                     [AutocompleteType.PROGRAM], "Program"
                 ),
@@ -206,9 +178,7 @@ def test_add_command(input: str, expected_result: ParserResult):
         (
             f"{CommandKeyword.REMOVE_TAG} TagName Program Name",
             ParserResult(
-                command=RemoveTag,
-                tag_name="TagName",
-                program_name="Program Name",
+                command=RemoveTag("TagName", "Program Name"),
                 autocomplete_context=AutocompleteContext(
                     [AutocompleteType.PROGRAM], "Program Name"
                 ),
