@@ -63,7 +63,7 @@ class GrammarNodeType(Enum):
 
     @property
     def token_type(self) -> TokenType:
-        _mapping = {
+        mapping = {
             GrammarNodeType.ROOT: TokenType.NOTHING,
             GrammarNodeType.SPACE: TokenType.SPACE,
             GrammarNodeType.TAG: TokenType.IDENTIFIER,
@@ -71,7 +71,7 @@ class GrammarNodeType(Enum):
             GrammarNodeType.OP_ADD: TokenType.OP_ADD,
             GrammarNodeType.OP_REM: TokenType.OP_REM,
         }
-        return _mapping[self]
+        return mapping[self]
 
 
 class GrammarNode:
@@ -182,6 +182,11 @@ def parse_input(input: str) -> ParserResult:
     parser = Parser()
 
     for token in lexer.tokens:
+        print(token)
         parser.parse_token(token)
 
     return parser.get_result()
+
+q = "+ tag1 "
+
+print(parse_input(q))

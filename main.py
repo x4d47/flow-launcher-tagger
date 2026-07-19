@@ -46,8 +46,6 @@ logger = logging.getLogger(__name__)
 
 class TagsPlugin(FlowLauncher):
     def __init__(self):
-        self.new_query: str
-
         self.command_registry: dict[
             Command, Callable[..., FlowLauncherResult | None]
         ] = {
@@ -81,7 +79,7 @@ class TagsPlugin(FlowLauncher):
 
     @override
     def query(self, param: str = "") -> list[FlowLauncherResult]:
-        logger.info("Query: %s", param)
+        logger.info("Query: %r", param)
 
         results: list[FlowLauncherResult] = []
 
@@ -96,8 +94,11 @@ class TagsPlugin(FlowLauncher):
         except ParserError as e:
             logger.exception("Parser error: %s", e)
             # return [e.as_flowlauncher_result()]
+            return results
 
-        results.extend(self.autocomplete(parser_result.autocomplete_context))
+        # logger.debug(parser_result)
+
+        results.extend(self.autocomplete(param, parser_result.autocomplete_context))
 
         return results
 
@@ -123,8 +124,8 @@ class TagsPlugin(FlowLauncher):
     def launch_program(self, path: str):
         _ = subprocess.Popen(path)
 
-    def autocomplete_command(self) -> list[FlowLauncherResult]:
-        SCORE: int = 100  # big enough for commands to appear at the top of a list
+    def autocomplete_command(self, base_query: str) -> list[FlowLauncherResult]:
+        SCORE: int = 100  # big enough for commands to appear at the top of the list
 
         return [
             {
@@ -134,7 +135,7 @@ class TagsPlugin(FlowLauncher):
                 "JsonRPCAction": {
                     "method": "Flow.Launcher.ChangeQuery",
                     "parameters": [
-                        f"{PLUGIN_KEYWORD} {CommandKeyword.ADD_TAG} ",
+                        f"{base_query}{CommandKeyword.ADD_TAG} ",
                         False,
                     ],
                     "dontHideAfterAction": True,
@@ -148,7 +149,7 @@ class TagsPlugin(FlowLauncher):
                 "JsonRPCAction": {
                     "method": "Flow.Launcher.ChangeQuery",
                     "parameters": [
-                        f"{self.new_query} {CommandKeyword.REMOVE_TAG} ",
+                        f"{base_query}{CommandKeyword.REMOVE_TAG} ",
                         False,
                     ],
                     "dontHideAfterAction": True,
@@ -157,7 +158,7 @@ class TagsPlugin(FlowLauncher):
             },
         ]
 
-    def autocomplete_tag(self, prefix: str) -> list[FlowLauncherResult]:
+    def autocomplete_tag(self, base_query: str, prefix: str) -> list[FlowLauncherResult]:
         results: list[FlowLauncherResult] = []
 
         for tag in self.tag_manager.tags:
@@ -169,7 +170,7 @@ class TagsPlugin(FlowLauncher):
                         "QuerySuggestionText": f"{tag}",
                         "JsonRPCAction": {
                             "method": "Flow.Launcher.ChangeQuery",
-                            "parameters": [f"{self.new_query} {tag} ", False],
+                            "parameters": [f"{base_query}{tag} ", False],
                             "dontHideAfterAction": True,
                         },
                     }
@@ -177,16 +178,34 @@ class TagsPlugin(FlowLauncher):
 
         return results
 
-    def autocomplete(self, context: AutocompleteContext) -> list[FlowLauncherResult]:
+    def autocomplete_program(self, base_query: str, prefix: str) -> list[FlowLauncherResult]:
+        results: list[FlowLauncherResult] = [{"Title": "autocomplete_program"}]
+
+        return results
+
+    def autocomplete(self, param: str, context: AutocompleteContext) -> list[FlowLauncherResult]:
         result: list[FlowLauncherResult] = []
 
+        if context.prefix and param.endswith(context.prefix):
+            stripped = param[:-len(context.prefix)]
+        else:
+            stripped = param
+
+        if stripped and not stripped.endswith(" "):
+            stripped += " "
+
+        base_query = f"{PLUGIN_KEYWORD} {stripped}"
+
         match context.type:
-            case [AutocompleteType.TAG, AutocompleteType.COMMAND]:
-                self.new_query = f"{PLUGIN_KEYWORD}"
+            case [AutocompleteType.COMMAND, AutocompleteType.TAG]:
                 result = [
-                    *self.autocomplete_command(),
-                    *self.autocomplete_tag(context.prefix),
+                    *self.autocomplete_command(base_query),
+                    *self.autocomplete_tag(base_query, context.prefix),
                 ]
+            case [AutocompleteType.TAG]:
+                result = self.autocomplete_tag(base_query, context.prefix)
+            case [AutocompleteType.PROGRAM]:
+                result = self.autocomplete_program(base_query, context.prefix)
             case _:
                 pass
 
