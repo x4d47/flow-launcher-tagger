@@ -1,7 +1,11 @@
-.pytest_chache
+main_old.py
+ai_main.py
+.venv
+.pytest_cache
 __pycache__
 lib
 123.py
 plugin.log
+flogin.log
 programs.json
 tags.json

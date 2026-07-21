@@ -1,2 +1,2 @@
-flowlauncher
+git+https://github.com/cibere/flogin.git@0971f2b
 Pillow

@@ -1,10 +1,5 @@
 # Fully AI generated
 
-import sys
-from pathlib import Path
-
-plugindir = Path.absolute(Path(__file__).parent)
-sys.path.insert(0, str(plugindir / "lib"))
 
 import base64
 import ctypes

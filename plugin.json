@@ -5,7 +5,7 @@
   "Description": "Tags plugin description...",
   "Author": "x4d47",
   "Version": "1.0.0",
-  "Language": "python",
+  "Language": "python_v2",
   "Website": "https://github.com/x4d47",
   "IcoPath": "Images\\app.png",
   "ExecuteFileName": "main.py"

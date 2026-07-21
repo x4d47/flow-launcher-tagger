@@ -160,11 +160,12 @@ class Parser:
         if self.current_grammar_node.semantic_role.startswith("OP_"):
             prefix = ""
         else:
-            prefix = self.current_token.value.strip() # strip() in case the value is space
+            prefix = (
+                self.current_token.value.strip()
+            )  # strip() in case the value is space
 
         return AutocompleteContext(
-            self.current_grammar_node.autocomplete_type_list,
-            prefix
+            self.current_grammar_node.autocomplete_type_list, prefix
         )
 
     def get_result(self) -> ParserResult:
@@ -177,6 +178,7 @@ class Parser:
 
         return ParserResult(command, self.autocomplete_context)
 
+
 def parse_input(input: str) -> ParserResult:
     lexer = Lexer(input)
     parser = Parser()
@@ -187,6 +189,7 @@ def parse_input(input: str) -> ParserResult:
 
     return parser.get_result()
 
-q = "+ tag1 "
 
-print(parse_input(q))
+# q = "+ tag1 "
+
+# print(parse_input(q))
