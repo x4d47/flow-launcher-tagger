@@ -1,8 +1,8 @@
+import subprocess
 import winreg
 from dataclasses import dataclass
 from typing import TypedDict, cast
 
-from core.flowlauncher_types import FlowLauncherResult
 from core.icon_extractor import get_dll_icon_as_data_uri
 
 
@@ -41,12 +41,8 @@ class Program:
 
         return data_uri
 
-    def to_flowlauncher_result(self, icon_fallback: str) -> FlowLauncherResult:
-        return FlowLauncherResult(
-            Title=self.name,
-            IcoPath=self.icon_to_data_uri(icon_fallback),
-            QuerySuggestionText=f" + {self.name}",
-        )
+    def launch(self):
+        return subprocess.Popen(self.path) if self.path else None
 
 
 @dataclass

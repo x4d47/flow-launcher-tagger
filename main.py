@@ -24,7 +24,6 @@ from core.parser import (
     AddTag,
     AutocompleteContext,
     AutocompleteType,
-    Command,
     GetProgramsByTag,
     Parser,
     ParserError,
@@ -70,6 +69,26 @@ class ChangeQueryResult(Result):
     async def callback(self):
         await self.api.change_query(self.new_query, requery=False)
         return ExecuteResponse(hide=False)
+
+
+class LaunchProgramResult(Result):
+    def __init__(
+        self,
+        program: Program,
+        api: FlowLauncherAPI,
+        **kwargs: Unpack[ResultConstructorKwargs],
+    ):
+        super().__init__(**kwargs)
+        self.program: Program = program
+        self.api: FlowLauncherAPI = api
+
+    @override
+    async def callback(self):
+        if self.program.launch() is None:
+            await self.api.show_error_message(
+                "Couldn't launch program", "Program path is not specified"
+            )
+        return ExecuteResponse(hide=True)
 
 
 # largest score value in FlowLauncher (2^31 - 1)
@@ -130,7 +149,31 @@ class TagsPlugin(Plugin):
             self.autocomplete(query.original_query, parser_result.autocomplete_context)
         )
 
+        match parser_result.command:
+            case GetProgramsByTag():
+                results.extend(self.get_programs_by_tag(parser_result.command.tag_name))
+            case None:
+                pass
+            case _:
+                pass
+
         return results
+
+    def get_programs_by_tag(self, tag: str) -> list[Result]:
+        result: list[Result] = []
+
+        for program in self.tag_manager.search_by_tag(tag):
+            result.append(
+                LaunchProgramResult(
+                    title=f"{program.name}",
+                    query_suggestion_text=f"{program.name}",
+                    icon=program.icon_to_data_uri("Images/transparent.png"),
+                    program=program,
+                    api=self.api,
+                )
+            )
+
+        return result
 
     def autocomplete_command(self, base_query: str) -> list[Result]:
         return [
