@@ -72,6 +72,10 @@ class ChangeQueryResult(Result):
         return ExecuteResponse(hide=False)
 
 
+# largest score value in FlowLauncher (2^31 - 1)
+MAX_SCORE: int = 2_147_483_647
+
+
 class TagsPlugin(Plugin):
     def __init__(self):
         super().__init__()
@@ -129,14 +133,12 @@ class TagsPlugin(Plugin):
         return results
 
     def autocomplete_command(self, base_query: str) -> list[Result]:
-        SCORE: int = 100  # big enough for commands to appear at the top of the list
-
         return [
             ChangeQueryResult(
                 title="Add tag",
                 query_suggestion_text=f"{CommandKeyword.ADD_TAG}",
                 icon="Images/transparent.png",
-                score=SCORE,
+                score=MAX_SCORE,
                 new_query=f"{base_query}{CommandKeyword.ADD_TAG} ",
                 api=self.api,
             ),
@@ -144,7 +146,7 @@ class TagsPlugin(Plugin):
                 title="Remove tag",
                 query_suggestion_text=f"{CommandKeyword.REMOVE_TAG}",
                 icon="Images/transparent.png",
-                score=SCORE,
+                score=MAX_SCORE,
                 new_query=f"{base_query}{CommandKeyword.REMOVE_TAG} ",
                 api=self.api,
             ),

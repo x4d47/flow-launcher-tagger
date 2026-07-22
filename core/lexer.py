@@ -3,8 +3,8 @@ from enum import StrEnum, auto
 
 
 class CommandKeyword(StrEnum):
-    ADD_TAG = "+"
-    REMOVE_TAG = "-"
+    ADD_TAG = "add"
+    REMOVE_TAG = "remove"
 
 
 class TokenType(StrEnum):
