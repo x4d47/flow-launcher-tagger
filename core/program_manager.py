@@ -92,7 +92,8 @@ class ProgramManager:
 
     def find(self, name: str) -> list[Program]:
         """
-        Find programs that match the given criteria. Fuzzy search.
+        Find programs that match the given criteria.
+        Prioritizes substring matches, falls back to fuzzy search for typos.
 
         Args:
             name: The name of the program to find.
@@ -100,10 +101,20 @@ class ProgramManager:
         Returns:
             A list of Program objects that match the criteria.
         """
+
+        matches: dict[str, Program] = {
+            program.name: program
+            for program in self._programs
+            if name in program.name.lower()
+        }
+
         program_dict = {program.name: program for program in self._programs}
 
-        matches: list[str] = difflib.get_close_matches(
-            name, program_dict.keys(), n=10, cutoff=0.5
+        fuzzy_matches: list[str] = difflib.get_close_matches(
+            name, program_dict.keys(), n=10, cutoff=0.4
         )
 
-        return [program_dict[name] for name in matches]
+        for name in fuzzy_matches:
+            matches[name] = program_dict[name]
+
+        return list(matches.values())

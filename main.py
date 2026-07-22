@@ -8,18 +8,14 @@ sys.path.insert(0, str(plugindir / ".venv" / "Lib" / "site-packages"))
 
 import logging
 import os
-from collections.abc import Iterable
 from typing import Unpack, override
 
 from flogin import (
     ExecuteResponse,
-    Glyph,
     Plugin,
-    ProgressBar,
     Query,
     Result,
     ResultConstructorKwargs,
-    ResultPreview,
 )
 from flogin.flow.api import FlowLauncherAPI
 
@@ -138,7 +134,7 @@ class TagsPlugin(Plugin):
         return [
             ChangeQueryResult(
                 title="Add tag",
-                query_suggestion_text="type tag name or select from the list",
+                query_suggestion_text=f"{CommandKeyword.ADD_TAG}",
                 icon="Images/transparent.png",
                 score=SCORE,
                 new_query=f"{base_query}{CommandKeyword.ADD_TAG} ",
@@ -146,7 +142,7 @@ class TagsPlugin(Plugin):
             ),
             ChangeQueryResult(
                 title="Remove tag",
-                query_suggestion_text="type tag name or select from the list",
+                query_suggestion_text=f"{CommandKeyword.REMOVE_TAG}",
                 icon="Images/transparent.png",
                 score=SCORE,
                 new_query=f"{base_query}{CommandKeyword.REMOVE_TAG} ",
@@ -172,7 +168,25 @@ class TagsPlugin(Plugin):
         return results
 
     def autocomplete_program(self, base_query: str, prefix: str) -> list[Result]:
-        results: list[Result] = [Result(title="autocomplete_program")]
+        results: list[Result] = []
+
+        logger.debug("Prefix: %s", prefix)
+
+        if prefix:
+            programs_found: list[Program] = self.program_manager.find(prefix)
+        else:
+            programs_found = self.program_manager.programs
+
+        for program in programs_found:
+            results.append(
+                ChangeQueryResult(
+                    title=f"{program.name}",
+                    query_suggestion_text=f"{program.name}",
+                    icon=program.icon_to_data_uri("Images/transparent.png"),
+                    new_query=f"{base_query}{program.name} ",
+                    api=self.api,
+                )
+            )
 
         return results
 

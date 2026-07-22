@@ -188,8 +188,3 @@ def parse_input(input: str) -> ParserResult:
         parser.parse_token(token)
 
     return parser.get_result()
-
-
-# q = "+ tag1 "
-
-# print(parse_input(q))
