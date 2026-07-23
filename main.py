@@ -106,7 +106,7 @@ class AddTagToProgramResult(Result):
 
     @override
     async def callback(self):
-        await self.api.show_error_message(
+        await self.api.show_notification(
             "Success!", f"Added tag '{self.tag}' to program '{self.program.name}'"
         )
         return ExecuteResponse(hide=True)
@@ -127,7 +127,7 @@ class RemoveTagFromProgramResult(Result):
 
     @override
     async def callback(self):
-        await self.api.show_error_message(
+        await self.api.show_notification(
             "Success!", f"Removed tag '{self.tag}' from program '{self.program.name}'"
         )
         return ExecuteResponse(hide=True)
